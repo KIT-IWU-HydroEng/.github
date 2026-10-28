@@ -1,0 +1,28 @@
+name: Repository checks
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # every Monday at 06:00 UTC, to catch links that broke in the meantime
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  citation:
+    uses: KIT-IWU-HydroEng/.github/.github/workflows/reusable-citation.yml@main
+    # Uncomment to fail (instead of warn) when CITATION.cff is missing:
+    # with:
+    #   required: true
+
+  markdown-links:
+    uses: KIT-IWU-HydroEng/.github/.github/workflows/reusable-markdown-links.yml@main
+
+  license:
+    uses: KIT-IWU-HydroEng/.github/.github/workflows/reusable-license.yml@main
+    # Uncomment for a full REUSE compliance check (https://reuse.software):
+    # with:
+    #   reuse: true

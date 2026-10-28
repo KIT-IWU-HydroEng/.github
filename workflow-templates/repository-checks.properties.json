@@ -1,0 +1,6 @@
+{
+  "name": "Repository checks (KIT-IWU-HydroEng)",
+  "description": "Validate CITATION.cff, check Markdown links and check that the repository has a license.",
+  "iconName": "octicon checklist",
+  "categories": ["Automation"]
+}

@@ -1,0 +1,41 @@
+# Reusable workflow: checks that the pull request title follows Conventional Commits 1.0.0.
+# Must be called from a workflow triggered by `pull_request_target` (or `pull_request`).
+# See workflow-templates/conventional-pr-title.yml for a ready-to-use caller.
+name: Conventional PR title
+
+on:
+  workflow_call:
+
+jobs:
+  pr-title:
+    name: Check PR title
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          # Keep in sync with the type table in .github/CONTRIBUTING.md
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          # Lowercase start, no full stop at the end
+          subjectPattern: ^(?![A-Z]).+[^.]$
+          subjectPatternError: |
+            The description "{subject}" in the pull request title "{title}" must start with a lowercase
+            letter and must not end with a full stop.
+            See https://github.com/KIT-IWU-HydroEng/.github/blob/main/.github/CONTRIBUTING.md#commit-messages
+          # For single-commit PRs, GitHub suggests the commit message instead of the PR title when
+          # squash-merging, so that commit message is validated as well.
+          validateSingleCommit: true

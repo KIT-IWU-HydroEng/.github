@@ -1,0 +1,38 @@
+# Reusable workflow: checks that the repository states its license.
+# By default it only checks that a license file exists. With `reuse: true` it runs a full
+# REUSE compliance check (https://reuse.software), which requires copyright and license
+# information for every file.
+# See workflow-templates/repository-checks.yml for a ready-to-use caller.
+name: License
+
+on:
+  workflow_call:
+    inputs:
+      reuse:
+        description: Run a full REUSE compliance check instead of only checking for a license file.
+        type: boolean
+        default: false
+
+jobs:
+  license:
+    name: Check license
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check for a license file
+        if: ${{ !inputs.reuse }}
+        run: |
+          shopt -s nullglob nocaseglob
+          files=(LICENSE* LICENCE* COPYING* LICENSES/*)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No license file found. Choose a license as described in https://github.com/KIT-IWU-HydroEng/.github/blob/main/.github/LICENSING.md"
+            exit 1
+          fi
+          echo "Found license file(s): ${files[*]}"
+
+      - name: Check REUSE compliance
+        if: ${{ inputs.reuse }}
+        uses: fsfe/reuse-action@v6

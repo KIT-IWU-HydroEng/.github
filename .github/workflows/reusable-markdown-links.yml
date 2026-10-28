@@ -1,0 +1,28 @@
+# Reusable workflow: checks that links in Markdown files are not broken.
+# Links that should be skipped (e.g. sites that block automated requests) can be listed,
+# one regular expression per line, in a .lycheeignore file in the repository root.
+# See workflow-templates/repository-checks.yml for a ready-to-use caller.
+name: Markdown links
+
+on:
+  workflow_call:
+    inputs:
+      args:
+        description: Arguments passed to lychee, including the files to check.
+        type: string
+        default: "--no-progress --verbose --max-retries 3 './**/*.md'"
+
+jobs:
+  markdown-links:
+    name: Check Markdown links
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: ${{ inputs.args }}
+          fail: true
+          failIfEmpty: false

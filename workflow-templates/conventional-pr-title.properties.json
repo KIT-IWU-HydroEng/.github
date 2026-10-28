@@ -1,0 +1,6 @@
+{
+  "name": "Conventional PR title (KIT-IWU-HydroEng)",
+  "description": "Check that pull request titles follow Conventional Commits, as required by our contributing guidelines.",
+  "iconName": "octicon git-pull-request",
+  "categories": ["Automation"]
+}

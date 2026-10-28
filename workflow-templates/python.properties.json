@@ -1,0 +1,7 @@
+{
+  "name": "Python (KIT-IWU-HydroEng)",
+  "description": "Lint and check formatting with ruff, and run tests with pytest on several Python versions.",
+  "iconName": "octicon beaker",
+  "categories": ["Python"],
+  "filePatterns": ["pyproject.toml$", "requirements.txt$", "setup.py$"]
+}

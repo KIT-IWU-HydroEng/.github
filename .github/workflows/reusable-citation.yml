@@ -1,0 +1,46 @@
+# Reusable workflow: validates CITATION.cff against the Citation File Format schema.
+# See workflow-templates/repository-checks.yml for a ready-to-use caller.
+name: Citation file
+
+on:
+  workflow_call:
+    inputs:
+      required:
+        description: Fail if the repository has no CITATION.cff file. If false, only a warning is shown.
+        type: boolean
+        default: false
+
+jobs:
+  citation:
+    name: Validate CITATION.cff
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check that CITATION.cff exists
+        id: exists
+        env:
+          REQUIRED: ${{ inputs.required }}
+        run: |
+          if [ -f CITATION.cff ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          elif [ "$REQUIRED" = "true" ]; then
+            echo "::error::No CITATION.cff found. Create one at https://citation-file-format.github.io/cff-initializer-javascript/"
+            exit 1
+          else
+            echo "::warning::No CITATION.cff found. Consider adding one so others can cite this software: https://citation-file-format.github.io/cff-initializer-javascript/"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v7
+        if: steps.exists.outputs.found == 'true'
+        with:
+          python-version: "3.13"
+
+      - name: Validate CITATION.cff
+        if: steps.exists.outputs.found == 'true'
+        run: |
+          pip install cffconvert==2.0.0
+          cffconvert --validate
